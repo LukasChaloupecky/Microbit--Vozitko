@@ -4,6 +4,8 @@ radio.onReceivedString(function on_received_string(receivedString: string) {
     let barvaLinie: any;
     let barvaOkoli: any;
     let odbockaP: boolean;
+    let TurnBackL: boolean;
+    let TurnBackR: boolean;
     
     if (receivedString == "ProhodBarvy") {
         L = barvaLinie
@@ -39,6 +41,16 @@ radio.onReceivedString(function on_received_string(receivedString: string) {
             Turnaround = true
         }
         
+    }
+    
+    if (receivedString == "TurnBackL") {
+        TurnBackL = true
+        TurnBackR = false
+    }
+    
+    if (receivedString == "TurnBackR") {
+        TurnBackL = false
+        TurnBackR = true
     }
     
 })
@@ -136,10 +148,17 @@ function backward() {
 led.enable(false)
 pins.setPull(DigitalPin.P4, PinPullMode.PullUp)
 pins.setPull(DigitalPin.P5, PinPullMode.PullUp)
+let TurnBackL = false
+let TurnBackR = true
 basic.forever(function on_forever() {
     radio.setGroup(77)
     if (Turnaround) {
-        turnbackR()
+        if (TurnBackR) {
+            turnbackR()
+        } else if (TurnBackL) {
+            turnbackL()
+        }
+        
     } else if (OdbockaL) {
         if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
             turnleft()

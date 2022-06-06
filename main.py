@@ -23,6 +23,13 @@ def on_received_string(receivedString):
             Turnaround = False
         else:
             Turnaround = True
+    if receivedString == "TurnBackL":
+        TurnBackL = True
+        TurnBackR = False
+    if receivedString == "TurnBackR":
+        TurnBackL = False
+        TurnBackR = True
+
 radio.on_received_string(on_received_string)
 
 
@@ -98,11 +105,15 @@ def backward():
 led.enable(False)
 pins.set_pull(DigitalPin.P4, PinPullMode.PULL_UP)
 pins.set_pull(DigitalPin.P5, PinPullMode.PULL_UP)
-
+TurnBackL = False
+TurnBackR = True
 def on_forever():
     radio.set_group(77)
     if Turnaround:
-        turnbackR()
+        if TurnBackR:
+            turnbackR()
+        elif TurnBackL:
+            turnbackL()
     elif OdbockaL:
         if pins.digital_read_pin(DigitalPin.P4) == barvaLinie and pins.digital_read_pin(DigitalPin.P5) == barvaLinie:
             turnleft()
