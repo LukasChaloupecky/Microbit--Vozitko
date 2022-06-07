@@ -145,6 +145,7 @@ function turnbackL() {
 
 // #####################################################################xx
 function turnright() {
+    // klasické vprava
     pins.analogWritePin(AnalogPin.P1, rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, rychlost_mensi)
@@ -152,6 +153,7 @@ function turnright() {
 }
 
 function stop() {
+    // funkce stop
     pins.analogWritePin(AnalogPin.P1, 0)
     pins.digitalWritePin(DigitalPin.P8, 0)
     pins.analogWritePin(AnalogPin.P2, 0)
@@ -159,6 +161,7 @@ function stop() {
 }
 
 function forward() {
+    // klasické vpřed
     pins.analogWritePin(AnalogPin.P1, rychlost_vetsi)
     pins.analogWritePin(AnalogPin.P2, rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)
@@ -166,6 +169,7 @@ function forward() {
 }
 
 function turnleft() {
+    // klasické vlevo
     pins.analogWritePin(AnalogPin.P1, rychlost_mensi)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, rychlost_vetsi)
@@ -173,6 +177,7 @@ function turnleft() {
 }
 
 function backward() {
+    // klasické vzad-MOŽNÁ NEFUNGUJE-negativní rychlost
     pins.analogWritePin(AnalogPin.P1, -1 * rychlost_vetsi)
     pins.analogWritePin(AnalogPin.P2, -1 * rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)

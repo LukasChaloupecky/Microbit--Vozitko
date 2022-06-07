@@ -113,27 +113,27 @@ def turnbackL(): #funkce vykonávající otočku dozadu vlevo
 
 ######################################################################xx
 
-def turnright():
+def turnright(): #klasické vprava
     pins.analog_write_pin(AnalogPin.P1, rychlost_vetsi)
     pins.digital_write_pin(DigitalPin.P8, 1)
     pins.analog_write_pin(AnalogPin.P2, rychlost_mensi)
     pins.digital_write_pin(DigitalPin.P12, 1)
-def stop():
+def stop(): #funkce stop
     pins.analog_write_pin(AnalogPin.P1, 0)
     pins.digital_write_pin(DigitalPin.P8, 0)
     pins.analog_write_pin(AnalogPin.P2, 0)
     pins.digital_write_pin(DigitalPin.P12, 0)
-def forward():
+def forward(): #klasické vpřed
     pins.analog_write_pin(AnalogPin.P1, rychlost_vetsi)
     pins.analog_write_pin(AnalogPin.P2, rychlost_vetsi)
     pins.digital_write_pin(DigitalPin.P8, 1)
     pins.digital_write_pin(DigitalPin.P12, 1)
-def turnleft():
+def turnleft(): #klasické vlevo
     pins.analog_write_pin(AnalogPin.P1, rychlost_mensi)
     pins.digital_write_pin(DigitalPin.P8, 1)
     pins.analog_write_pin(AnalogPin.P2, rychlost_vetsi)
     pins.digital_write_pin(DigitalPin.P12, 1)
-def backward():
+def backward(): #klasické vzad-MOŽNÁ NEFUNGUJE-negativní rychlost
     pins.analog_write_pin(AnalogPin.P1, -1*rychlost_vetsi)
     pins.analog_write_pin(AnalogPin.P2, -1*rychlost_vetsi)
     pins.digital_write_pin(DigitalPin.P8, 1)
