@@ -4,6 +4,8 @@ let rychlost_mensi = 100
 // pro usnadnění 
 let rychlost_otaceni = 600
 // pro usnadnění 
+let automaticke_ovladani = true
+// False při ovládání ovladačem
 let barvaLinie = 1
 // funguje tak cerna i bila paska
 let barvaOkoli = 0
@@ -30,11 +32,16 @@ led.enable(false)
 radio.onReceivedString(function on_received_string(receivedString: string) {
     let L: number;
     let O: number;
-    let barvaLinie: number;
-    let barvaOkoli: number;
     let odbockaP: boolean;
-    let TurnBackL: boolean;
-    let TurnBackR: boolean;
+    
+    if (receivedString == "KontrolaNadVozítkemPřesOvladač") {
+        if (automaticke_ovladani) {
+            automaticke_ovladani = false
+        } else {
+            automaticke_ovladani = true
+        }
+        
+    }
     
     if (receivedString == "ProhodBarvy") {
         L = barvaLinie
@@ -85,6 +92,7 @@ radio.onReceivedString(function on_received_string(receivedString: string) {
 })
 // #####################################################################xx
 function turnrightR() {
+    // funkce umožnující otočku vzadu vpravo
     pins.analogWritePin(AnalogPin.P1, rychlost_otaceni)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, 0)
@@ -92,6 +100,7 @@ function turnrightR() {
 }
 
 function turnleftL() {
+    // funkce umožnující otočku vzadu vlevo
     pins.analogWritePin(AnalogPin.P1, 0)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, rychlost_otaceni)
@@ -100,6 +109,7 @@ function turnleftL() {
 
 function turnbackR() {
     let Turnaround: boolean;
+    // funkce vykonávající otočku dozadu vpravo
     
     if (first && pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
         turnrightR()
@@ -117,6 +127,7 @@ function turnbackR() {
 
 function turnbackL() {
     let Turnaround: boolean;
+    // funkce vykonávající otočku dozadu vlevo
     
     if (first && pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
         turnleftL()
@@ -138,7 +149,6 @@ function turnright() {
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, rychlost_mensi)
     pins.digitalWritePin(DigitalPin.P12, 1)
-    let item = 0
 }
 
 function stop() {
@@ -170,45 +180,58 @@ function backward() {
 }
 
 // #####################################################################xx
+//       AUTOMATICKÉ OVLÁDÁNÍ
 basic.forever(function on_forever() {
     radio.setGroup(77)
-    if (Turnaround) {
-        if (TurnBackR) {
-            turnbackR()
-        } else if (TurnBackL) {
-            turnbackL()
-        }
-        
-    } else if (OdbockaL) {
-        if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
-            turnleft()
-        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+    // radio group
+    if (automaticke_ovladani) {
+        // #################################
+        if (Turnaround) {
+            if (TurnBackR) {
+                turnbackR()
+            } else if (TurnBackL) {
+                // funkce pro otoceni vzadu (L/P)
+                turnbackL()
+            }
+            
+        } else if (OdbockaL) {
+            // #################################
+            //  funkce pro odpocku u krizovatky (L/P)
+            if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+                turnleft()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+                forward()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
+                backward()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
+                turnleft()
+            }
+            
+        } else if (OdbockaP) {
+            if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+                turnright()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+                turnright()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
+                backward()
+            } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
+                forward()
+            }
+            
+        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+            // ##############################
+            //  NORMÁLNÍ AUTOMATICKÁ JÍZDA
             forward()
         } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
             backward()
+        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
+            turnright()
         } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
             turnleft()
         }
         
-    } else if (OdbockaP) {
-        if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
-            turnright()
-        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
-            turnright()
-        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
-            backward()
-        } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
-            forward()
-        }
-        
-    } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
-        forward()
-    } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
-        backward()
-    } else if (pins.digitalReadPin(DigitalPin.P4) == barvaOkoli && pins.digitalReadPin(DigitalPin.P5) == barvaLinie) {
-        turnright()
-    } else if (pins.digitalReadPin(DigitalPin.P4) == barvaLinie && pins.digitalReadPin(DigitalPin.P5) == barvaOkoli) {
-        turnleft()
     }
     
 })
+// ######################################################################
+//        OVLÁDÁNÍ PŘES OVLADAČ
