@@ -1,8 +1,37 @@
+let rychlost_vetsi = 600
+// pro usnadnění 
+let rychlost_mensi = 100
+// pro usnadnění 
+let rychlost_otaceni = 600
+// pro usnadnění 
+let barvaLinie = 1
+// funguje tak cerna i bila paska
+let barvaOkoli = 0
+// funguje tak cerna i bila paska
+let OdbockaL = false
+// u odbocky vleva
+let OdbockaP = false
+// u odbocky vprava
+let first = true
+// dulezita hloupost k otaceni na druhou stranu
+let Turnaround = false
+// variable pro příkaz pro otoceni
+let TurnBackL = false
+// otaceni dozadu vlevo
+let TurnBackR = true
+// otaceni dozadu vpravo
+pins.setPull(DigitalPin.P4, PinPullMode.PullUp)
+// nevim
+pins.setPull(DigitalPin.P5, PinPullMode.PullUp)
+// nevim
+led.enable(false)
+// nevim
+// #####################################################################xx
 radio.onReceivedString(function on_received_string(receivedString: string) {
-    let L: any;
-    let O: any;
-    let barvaLinie: any;
-    let barvaOkoli: any;
+    let L: number;
+    let O: number;
+    let barvaLinie: number;
+    let barvaOkoli: number;
     let odbockaP: boolean;
     let TurnBackL: boolean;
     let TurnBackR: boolean;
@@ -54,15 +83,9 @@ radio.onReceivedString(function on_received_string(receivedString: string) {
     }
     
 })
-let barvaLinie = 1
-// funguje tak cerna i bila paska
-let barvaOkoli = 0
-let OdbockaL = false
-let OdbockaP = false
-let first = true
-let Turnaround = false
+// #####################################################################xx
 function turnrightR() {
-    pins.analogWritePin(AnalogPin.P1, 600)
+    pins.analogWritePin(AnalogPin.P1, rychlost_otaceni)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.analogWritePin(AnalogPin.P2, 0)
     pins.digitalWritePin(DigitalPin.P12, 1)
@@ -71,7 +94,7 @@ function turnrightR() {
 function turnleftL() {
     pins.analogWritePin(AnalogPin.P1, 0)
     pins.digitalWritePin(DigitalPin.P8, 1)
-    pins.analogWritePin(AnalogPin.P2, 600)
+    pins.analogWritePin(AnalogPin.P2, rychlost_otaceni)
     pins.digitalWritePin(DigitalPin.P12, 1)
 }
 
@@ -109,10 +132,11 @@ function turnbackL() {
     
 }
 
+// #####################################################################xx
 function turnright() {
-    pins.analogWritePin(AnalogPin.P1, 600)
+    pins.analogWritePin(AnalogPin.P1, rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)
-    pins.analogWritePin(AnalogPin.P2, 100)
+    pins.analogWritePin(AnalogPin.P2, rychlost_mensi)
     pins.digitalWritePin(DigitalPin.P12, 1)
     let item = 0
 }
@@ -125,31 +149,27 @@ function stop() {
 }
 
 function forward() {
-    pins.analogWritePin(AnalogPin.P1, 600)
-    pins.analogWritePin(AnalogPin.P2, 600)
+    pins.analogWritePin(AnalogPin.P1, rychlost_vetsi)
+    pins.analogWritePin(AnalogPin.P2, rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
 }
 
 function turnleft() {
-    pins.analogWritePin(AnalogPin.P1, 100)
+    pins.analogWritePin(AnalogPin.P1, rychlost_mensi)
     pins.digitalWritePin(DigitalPin.P8, 1)
-    pins.analogWritePin(AnalogPin.P2, 600)
+    pins.analogWritePin(AnalogPin.P2, rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P12, 1)
 }
 
 function backward() {
-    pins.analogWritePin(AnalogPin.P1, -600)
-    pins.analogWritePin(AnalogPin.P2, -600)
+    pins.analogWritePin(AnalogPin.P1, -1 * rychlost_vetsi)
+    pins.analogWritePin(AnalogPin.P2, -1 * rychlost_vetsi)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
 }
 
-led.enable(false)
-pins.setPull(DigitalPin.P4, PinPullMode.PullUp)
-pins.setPull(DigitalPin.P5, PinPullMode.PullUp)
-let TurnBackL = false
-let TurnBackR = true
+// #####################################################################xx
 basic.forever(function on_forever() {
     radio.setGroup(77)
     if (Turnaround) {
